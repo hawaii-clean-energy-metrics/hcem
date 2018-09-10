@@ -1,0 +1,8 @@
+xlrd==1.0.0
+ckanapi==4.1
+lxml==4.2.4
+et-xmlfile==1.0.1
+jdcal==1.2
+openpyxl==2.3.5
+Pillow==5.2.0
+python-dateutil==2.5.3

@@ -1,0 +1,23 @@
+digraph dependencies {
+layers="one:two:three";
+outputorder="edgesfirst";
+nodesep=0.75;
+Charts_M12_Transportation [layer="two"] [style="filled"] [height="2.2"] [shape="doubleoctagon"] [fontsize="20"] [fillcolor="red2"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Charts\nM12\nTransportation"] [width="2.2"] [penwidth="2"];
+Charts_M12_Transportation -> Dashboard_M10_RPS [layer="one"] [arrowhead="crow"] [color="yellow2"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Charts_M12_Transportation -> Dashboard_M12_Transportation [layer="one"] [arrowhead="crow"] [color="yellow2"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Dashboard_M10_RPS [layer="two"] [style="filled"] [height="2.2"] [shape="diamond"] [fontsize="20"] [fillcolor="grey75"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Dashboard\nM10\nRPS"] [width="2.2"] [penwidth="2"];
+Dashboard_M10_RPS -> Input_RPS [layer="one"] [arrowhead="crow"] [color="limegreen"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Dashboard_M12_Transportation [layer="two"] [style="filled"] [height="2.2"] [shape="diamond"] [fontsize="20"] [fillcolor="grey75"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Dashboard\nM12\nTransportation"] [width="2.2"] [penwidth="2"];
+Dashboard_M12_Transportation -> DBEDT_Biodiesel [layer="one"] [arrowhead="crow"] [color="black"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Dashboard_M12_Transportation -> DBEDT_Yearly [layer="one"] [arrowhead="crow"] [color="black"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Dashboard_M12_Transportation -> EIA_Consumption [layer="one"] [arrowhead="crow"] [color="black"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Input_RPS [layer="two"] [style="filled"] [height="2.2"] [shape="doublecircle"] [fontsize="20"] [fillcolor="limegreen"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Input\nRPS"] [width="2.2"] [penwidth="2"];
+DBEDT_Biodiesel [layer="two"] [style="filled"] [height="2.2"] [shape="box"] [fontsize="20"] [fillcolor="yellow"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="DBEDT\nBiodiesel"] [width="2.2"] [penwidth="2"];
+DBEDT_Biodiesel -> Input_DBEDT_Monthly_Energy [layer="one"] [arrowhead="crow"] [color="limegreen"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+DBEDT_Yearly [layer="two"] [style="filled"] [height="2.2"] [shape="box"] [fontsize="20"] [fillcolor="yellow"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="DBEDT\nYearly"] [width="2.2"] [penwidth="2"];
+DBEDT_Yearly -> Input_DBEDT_Monthly_Energy [layer="one"] [arrowhead="crow"] [color="limegreen"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+EIA_Consumption [layer="two"] [style="filled"] [height="2.2"] [shape="box"] [fontsize="20"] [fillcolor="yellow"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="EIA\nConsumption"] [width="2.2"] [penwidth="2"];
+EIA_Consumption -> Input_EIA_SEDS [layer="one"] [arrowhead="crow"] [color="limegreen"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Input_DBEDT_Monthly_Energy [layer="two"] [style="filled"] [height="2.2"] [shape="doublecircle"] [fontsize="20"] [fillcolor="limegreen"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Input\nDBEDT\nMonthly\nEnergy"] [width="2.2"] [penwidth="2"];
+Input_EIA_SEDS [layer="two"] [style="filled"] [height="2.2"] [shape="doublecircle"] [fontsize="20"] [fillcolor="limegreen"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Input\nEIA\nSEDS"] [width="2.2"] [penwidth="2"];
+}

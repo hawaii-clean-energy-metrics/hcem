@@ -1,0 +1,31 @@
+[package]
+command=package_create
+name=eia-propane-monthly-
+title=Cushing, OK WTI Spot Price FOB (Dollars per Barrel)
+owner_org=eia
+url=https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=pet&s=eer_epllpa_pf4_y44mb_dpg&f=m
+notes=Mont Belvieu, TX Propane Spot Price FOB
+
+[website]
+command=resource_create
+name=EIA Open Data Page
+package_id=eia-propane-monthly-price
+url=https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=pet&s=rwtc&f=m
+
+[external excel]
+command=resource_create
+name=EIA Excel Spreadsheeet
+package_id=eia-propane-spot
+url=https://www.eia.gov/dnav/pet/hist_xls/EER_EPLLPA_PF4_Y44MB_DPGm.xls
+
+[excel]
+command=resource_create
+name=RWTCm Excel Spreadsheeet
+package_id=eia-rwtcm
+filename=RWTCm.xls
+
+[csv]
+command=resource_create
+name=RWTCm CSV
+package_id=eia-rwtcm
+filename=RWTCm.csv

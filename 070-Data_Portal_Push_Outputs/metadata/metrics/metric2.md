@@ -1,0 +1,6 @@
+## Overview
+The second metric lists the expenditures on fuels from 1990 to the present and breaks these data out by
+fuel type. Due to the current limitation in granularity of domestic data, the model does not currently calculate domestic petroleum purchases differently from foreign imports, however, the model is configured to be able to handle this differentiation if the data do become available in the future.
+
+## Issues and Data Gaps
+This metric uses EIA import, consumption, and pricing data for petroleum, coal, and ethanol products. Biodiesel consumption and pricing data are taken from DBEDT. As is done in metric one, foreign imports are subtracted from consumption to estimate domestic purchases. A significant drop in foreign imports appears in 2009. A review of the data reveals that a Tosoro refinery claimed to have purchased significantly less petroleum than in 2008 and/or 2010. EIA has agreed this data point should be  considered an outlier. Nevertheless, this anomaly reveals the most conspicuous discovered instance of the limitations in relying upon EIA consumption and import data.

@@ -1,0 +1,8 @@
+digraph dependencies {
+layers="one:two:three";
+outputorder="edgesfirst";
+nodesep=0.75;
+EIA_Expenditures [layer="two"] [style="filled"] [height="2.2"] [shape="box"] [fontsize="20"] [fillcolor="yellow"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="EIA\nExpenditures"] [width="2.2"] [penwidth="2"];
+EIA_Expenditures -> Input_EIA_SEDS [layer="one"] [arrowhead="crow"] [color="limegreen"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Input_EIA_SEDS [layer="two"] [style="filled"] [height="2.2"] [shape="doublecircle"] [fontsize="20"] [fillcolor="limegreen"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Input\nEIA\nSEDS"] [width="2.2"] [penwidth="2"];
+}

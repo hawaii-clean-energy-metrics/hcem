@@ -1,0 +1,10 @@
+digraph dependencies {
+layers="one:two:three";
+outputorder="edgesfirst";
+nodesep=0.75;
+Crude_Oil_Prices [layer="two"] [style="filled"] [height="2.2"] [shape="box"] [fontsize="20"] [fillcolor="yellow"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Crude\nOil\nPrices"] [width="2.2"] [penwidth="2"];
+Crude_Oil_Prices -> Input_EIA_Crude_Europe_Brent [layer="one"] [arrowhead="crow"] [color="limegreen"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Crude_Oil_Prices -> Input_EIA_Crude_WTI [layer="one"] [arrowhead="crow"] [color="limegreen"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Input_EIA_Crude_Europe_Brent [layer="two"] [style="filled"] [height="2.2"] [shape="doublecircle"] [fontsize="20"] [fillcolor="limegreen"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Input\nEIA\nCrude\nEurope\nBrent"] [width="2.2"] [penwidth="2"];
+Input_EIA_Crude_WTI [layer="two"] [style="filled"] [height="2.2"] [shape="doublecircle"] [fontsize="20"] [fillcolor="limegreen"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Input\nEIA\nCrude\nWTI"] [width="2.2"] [penwidth="2"];
+}

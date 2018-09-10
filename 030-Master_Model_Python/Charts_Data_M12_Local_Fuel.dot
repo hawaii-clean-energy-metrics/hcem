@@ -1,0 +1,16 @@
+digraph dependencies {
+layers="one:two:three";
+outputorder="edgesfirst";
+nodesep=0.75;
+Charts_Data_M12_Local_Fuel [layer="two"] [style="filled"] [height="2.2"] [shape="octagon"] [fontsize="20"] [fillcolor="orange2"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Charts\nData\nM12\nLocal\nFuel"] [width="2.2"] [penwidth="2"];
+Charts_Data_M12_Local_Fuel -> Dashboard_M12_Local_Fuel [layer="one"] [arrowhead="crow"] [color="yellow2"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Charts_M12_Local_Fuel [layer="two"] [style="filled"] [height="2.2"] [shape="doubleoctagon"] [fontsize="20"] [fillcolor="red2"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Charts\nM12\nLocal\nFuel"] [width="2.2"] [penwidth="2"];
+Charts_M12_Local_Fuel -> Dashboard_M10_RPS [layer="one"] [arrowhead="crow"] [color="yellow2"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Charts_M12_Local_Fuel -> Dashboard_M12_Local_Fuel [layer="one"] [arrowhead="crow"] [color="yellow2"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Dashboard_M12_Local_Fuel [layer="two"] [style="filled"] [height="2.2"] [shape="diamond"] [fontsize="20"] [fillcolor="grey75"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Dashboard\nM12\nLocal\nFuel"] [width="2.2"] [penwidth="2"];
+Dashboard_M12_Local_Fuel -> Dashboard_M10_RPS [layer="one"] [arrowhead="crow"] [color="yellow2"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Dashboard_M12_Local_Fuel -> Input_RPS [layer="one"] [arrowhead="crow"] [color="limegreen"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Dashboard_M10_RPS [layer="two"] [style="filled"] [height="2.2"] [shape="diamond"] [fontsize="20"] [fillcolor="grey75"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Dashboard\nM10\nRPS"] [width="2.2"] [penwidth="2"];
+Dashboard_M10_RPS -> Input_RPS [layer="one"] [arrowhead="crow"] [color="limegreen"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Input_RPS [layer="two"] [style="filled"] [height="2.2"] [shape="doublecircle"] [fontsize="20"] [fillcolor="limegreen"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Input\nRPS"] [width="2.2"] [penwidth="2"];
+}

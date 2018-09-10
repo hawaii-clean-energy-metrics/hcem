@@ -1,0 +1,12 @@
+digraph dependencies {
+layers="one:two:three";
+outputorder="edgesfirst";
+nodesep=0.75;
+EIA_Imports_Distillate_Fuel [layer="two"] [style="filled"] [height="2.2"] [shape="box"] [fontsize="20"] [fillcolor="yellow"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="EIA\nImports\nDistillate\nFuel"] [width="2.2"] [penwidth="2"];
+EIA_Imports_Distillate_Fuel -> EIA_Imports [layer="one"] [arrowhead="crow"] [color="black"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+EIA_Imports [layer="two"] [style="filled"] [height="2.2"] [shape="box"] [fontsize="20"] [fillcolor="yellow"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="EIA\nImports"] [width="2.2"] [penwidth="2"];
+EIA_Imports -> EIA_Petroleum_Classification [layer="one"] [arrowhead="crow"] [color="black"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+EIA_Imports -> Input_EIA_Imports_Petroleum [layer="one"] [arrowhead="crow"] [color="limegreen"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+EIA_Petroleum_Classification [layer="two"] [style="filled"] [height="2.2"] [shape="box"] [fontsize="20"] [fillcolor="yellow"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="EIA\nPetroleum\nClassification"] [width="2.2"] [penwidth="2"];
+Input_EIA_Imports_Petroleum [layer="two"] [style="filled"] [height="2.2"] [shape="doublecircle"] [fontsize="20"] [fillcolor="limegreen"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Input\nEIA\nImports\nPetroleum"] [width="2.2"] [penwidth="2"];
+}

@@ -1,0 +1,24 @@
+digraph dependencies {
+layers="one:two:three";
+outputorder="edgesfirst";
+nodesep=0.75;
+Country_Imports_Ethanol_Fuel [layer="two"] [style="filled"] [height="2.2"] [shape="box"] [fontsize="20"] [fillcolor="yellow"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Country\nImports\nEthanol\nFuel"] [width="2.2"] [penwidth="2"];
+Country_Imports_Ethanol_Fuel -> Carbon_Coefficients [layer="one"] [arrowhead="crow"] [color="black"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Country_Imports_Ethanol_Fuel -> EIA_Consumption [layer="one"] [arrowhead="crow"] [color="black"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Country_Imports_Ethanol_Fuel -> EIA_Imports_Fuel_Ethanol [layer="one"] [arrowhead="crow"] [color="black"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Country_Imports_Ethanol_Fuel -> LCEF_by_Fuel_Type [layer="one"] [arrowhead="crow"] [color="black"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Carbon_Coefficients [layer="two"] [style="filled"] [height="2.2"] [shape="box"] [fontsize="20"] [fillcolor="yellow"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Carbon\nCoefficients"] [width="2.2"] [penwidth="2"];
+Carbon_Coefficients -> EIA_Consumption [layer="one"] [arrowhead="crow"] [color="black"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Carbon_Coefficients -> LCEF_by_Fuel_Type [layer="one"] [arrowhead="crow"] [color="black"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+EIA_Consumption [layer="two"] [style="filled"] [height="2.2"] [shape="box"] [fontsize="20"] [fillcolor="yellow"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="EIA\nConsumption"] [width="2.2"] [penwidth="2"];
+EIA_Consumption -> Input_EIA_SEDS [layer="one"] [arrowhead="crow"] [color="limegreen"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+EIA_Imports_Fuel_Ethanol [layer="two"] [style="filled"] [height="2.2"] [shape="box"] [fontsize="20"] [fillcolor="yellow"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="EIA\nImports\nFuel\nEthanol"] [width="2.2"] [penwidth="2"];
+EIA_Imports_Fuel_Ethanol -> EIA_Imports [layer="one"] [arrowhead="crow"] [color="black"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+LCEF_by_Fuel_Type [layer="two"] [style="filled"] [height="2.2"] [shape="box"] [fontsize="20"] [fillcolor="yellow"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="LCEF\nby\nFuel\nType"] [width="2.2"] [penwidth="2"];
+Input_EIA_SEDS [layer="two"] [style="filled"] [height="2.2"] [shape="doublecircle"] [fontsize="20"] [fillcolor="limegreen"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Input\nEIA\nSEDS"] [width="2.2"] [penwidth="2"];
+EIA_Imports [layer="two"] [style="filled"] [height="2.2"] [shape="box"] [fontsize="20"] [fillcolor="yellow"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="EIA\nImports"] [width="2.2"] [penwidth="2"];
+EIA_Imports -> EIA_Petroleum_Classification [layer="one"] [arrowhead="crow"] [color="black"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+EIA_Imports -> Input_EIA_Imports_Petroleum [layer="one"] [arrowhead="crow"] [color="limegreen"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+EIA_Petroleum_Classification [layer="two"] [style="filled"] [height="2.2"] [shape="box"] [fontsize="20"] [fillcolor="yellow"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="EIA\nPetroleum\nClassification"] [width="2.2"] [penwidth="2"];
+Input_EIA_Imports_Petroleum [layer="two"] [style="filled"] [height="2.2"] [shape="doublecircle"] [fontsize="20"] [fillcolor="limegreen"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Input\nEIA\nImports\nPetroleum"] [width="2.2"] [penwidth="2"];
+}

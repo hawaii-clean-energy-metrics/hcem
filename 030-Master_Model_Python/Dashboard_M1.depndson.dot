@@ -1,0 +1,26 @@
+digraph dependencies {
+layers="one:two:three";
+outputorder="edgesfirst";
+nodesep=0.75;
+Dashboard_M1 [layer="two"] [style="filled"] [height="2.2"] [shape="diamond"] [fontsize="20"] [fillcolor="grey75"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Dashboard\nM1"] [width="2.2"] [penwidth="2"];
+Aggregated_Dashboard_Yearly -> Dashboard_M1 [layer="one"] [arrowhead="crow"] [color="yellow2"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Charts_Data_M1 -> Dashboard_M1 [layer="one"] [arrowhead="crow"] [color="yellow2"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Charts_Data_M1_Extra -> Dashboard_M1 [layer="one"] [arrowhead="crow"] [color="yellow2"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Dashboard_M3 -> Dashboard_M1 [layer="one"] [arrowhead="crow"] [color="yellow2"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Aggregated_Dashboard_Yearly [layer="two"] [style="filled"] [height="2.2"] [shape="box"] [fontsize="20"] [fillcolor="yellow"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Aggregated\nDashboard\nYearly"] [width="2.2"] [penwidth="2"];
+Charts_Data_M1 [layer="two"] [style="filled"] [height="2.2"] [shape="octagon"] [fontsize="20"] [fillcolor="orange2"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Charts\nData\nM1"] [width="2.2"] [penwidth="2"];
+Aggregated_Charts_Data_Yearly -> Charts_Data_M1 [layer="one"] [arrowhead="crow"] [color="orange2"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Charts_Data_M1_Extra -> Charts_Data_M1 [layer="one"] [arrowhead="crow"] [color="orange2"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Charts_M1 -> Charts_Data_M1 [layer="one"] [arrowhead="crow"] [color="orange2"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Charts_Data_M1_Extra [layer="two"] [style="filled"] [height="2.2"] [shape="octagon"] [fontsize="20"] [fillcolor="orange2"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Charts\nData\nM1\nExtra"] [width="2.2"] [penwidth="2"];
+Aggregated_Charts_Data_Yearly -> Charts_Data_M1_Extra [layer="one"] [arrowhead="crow"] [color="orange2"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Dashboard_M3 [layer="two"] [style="filled"] [height="2.2"] [shape="diamond"] [fontsize="20"] [fillcolor="grey75"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Dashboard\nM3"] [width="2.2"] [penwidth="2"];
+Aggregated_Dashboard_Yearly -> Dashboard_M3 [layer="one"] [arrowhead="crow"] [color="yellow2"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Charts_Data_M3 -> Dashboard_M3 [layer="one"] [arrowhead="crow"] [color="yellow2"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Aggregated_Charts_Data_Yearly [layer="two"] [style="filled"] [height="2.2"] [shape="box"] [fontsize="20"] [fillcolor="yellow"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Aggregated\nCharts\nData\nYearly"] [width="2.2"] [penwidth="2"];
+Charts_M1 [layer="two"] [style="filled"] [height="2.2"] [shape="doubleoctagon"] [fontsize="20"] [fillcolor="red2"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Charts\nM1"] [width="2.2"] [penwidth="2"];
+Charts_Data_M3 [layer="two"] [style="filled"] [height="2.2"] [shape="octagon"] [fontsize="20"] [fillcolor="orange2"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Charts\nData\nM3"] [width="2.2"] [penwidth="2"];
+Aggregated_Charts_Data_Yearly -> Charts_Data_M3 [layer="one"] [arrowhead="crow"] [color="orange2"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Charts_M3 -> Charts_Data_M3 [layer="one"] [arrowhead="crow"] [color="orange2"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Charts_M3 [layer="two"] [style="filled"] [height="2.2"] [shape="doubleoctagon"] [fontsize="20"] [fillcolor="red2"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Charts\nM3"] [width="2.2"] [penwidth="2"];
+}

@@ -1,0 +1,391 @@
+#!/usr/bin/env python
+import sys
+import traceback
+import importlib
+import collections
+from xl2py_excel_runtime import name_to_colrow, colrow_to_name, stringrep, parse_datetime
+import re
+import os.path
+import openpyxl
+import datetime
+import xl2py_workbook_runtime as workbook
+from resource import getrusage, RUSAGE_SELF
+import argparse
+
+VERSION="1.0"
+
+def get_command_line_arguments(): 
+    parser = argparse.ArgumentParser(description='xl2py transforms Excel Spreadsheet files (.xls, xlsx) and the formulas within into Python2 code. The generated Python2 code can then compute the spreadsheet and output new CSV or Excel spreadsheets.',
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('--input-updates-dir', dest='updatesdir', action='store',
+                        default=None,
+                        help='base directory of model inputs dir')
+
+    parser.add_argument('--output-csv', dest='csv', action='store',
+                        default=None,
+                        help='save output as Comma Separated Value (.csv) format. Use - for stdout')
+
+    parser.add_argument('--output-py', dest='py', action='store',
+                        default=None,
+                        help='Python2 code generation base directory')
+
+    parser.add_argument('--output-xlsx', dest='xlsx', action='store',
+                        default=None,
+                        nargs="?",
+                        help='save output as Excel (.xlsx) format')
+
+    parser.add_argument('--input-xlsx', dest='input_xlsx', action='store',
+                        default=None,
+                        help='input Excel (.xlsx or .xls) file for --output-py code generation')
+
+    parser.add_argument('--names', dest='names', action='store_true',
+                        default=False,
+                        help='Print all worksheet names. Uses Worksheets from input-xlsx if specified.')
+
+    parser.add_argument('--formula-only', dest='formulaonly', action='store_true',
+                        default=False,
+                        help='Output cached formula string only (don\'t evaluate)')
+
+    parser.add_argument('--verbose', dest='verbose', action='store_true',
+                        default=False,
+                        help='verbose output')
+
+    parser.add_argument('--version', dest='show_version', action='store_true',
+                        default=False,
+                        help='print version string and exit')
+    parser.add_argument('worksheets', metavar='worksheets', nargs='*',
+                        help='worksheets to process')
+    args = parser.parse_args()
+    if args.show_version:
+        print "{}".format(VERSION)
+        sys.exit(1)
+        
+    for k in args.__dict__:
+        print "# args.{} = {}".format(k, args.__dict__[k])
+
+    return args
+
+def rusage(msg=""):
+    rusage = getrusage(RUSAGE_SELF)
+    print "\\n".join('"rusage","{}",{}'.format(msg,','.join(['"{}"'.format(r) for r in rusage])).split("\n"))
+
+def console(msg):
+    rusage(msg)
+    sys.stderr.write("{}".format(msg))
+    sys.stderr.flush()
+    sys.stdout.flush()
+
+
+def emit_worksheet(worksheet, emit_formula=True):
+    console("emit_worksheet({})\n".format(worksheet.title))
+    fdata = {}
+    for rowcol, rep in worksheet.icells.iteritems():
+        cell_name = rep.__class__.__name__
+        val = rep.evaluate(emit_formula)
+        if val is not None:
+            fdata[cell_name] = val
+
+    return fdata
+
+
+def compute_fdata_dims(fdata):
+    colrow = [name_to_colrow(name) for name in fdata.keys()]
+    maxcol = max([col for col, row in colrow])
+    maxrow = max([row for col, row in colrow])
+    return maxcol, maxrow
+
+
+def convert_map_to_csv_text(fdata):
+    if not fdata:
+        return ""
+
+    maxcol, maxrow = compute_fdata_dims(fdata)
+
+    lines = [None] * maxrow
+
+    for row in range(maxrow):
+        rowdata = [None] * maxcol
+        for col in range(maxcol):
+            cid = colrow_to_name(col + 1, row + 1)
+            val = fdata.get(cid, "")
+            val = stringrep(val, True)
+            val = '"{}"'.format(val)
+            rowdata[col] = val
+        lines[row] = ",".join(rowdata)
+
+    text = "\n".join(lines)
+
+    return text
+
+
+def write_csv(fdata, csv_filename):
+    text = convert_map_to_csv_text(fdata)
+    with open(csv_filename, "w") as f:
+        f.write(text)
+    return csv_filename
+
+
+def sort_worksheets(worksheets, first):
+    todo = list(sorted(worksheets.keys()))
+    result = collections.OrderedDict()
+
+    def add(name):
+        assert name in todo
+        assert name in worksheets
+        result[name] = worksheets[name]
+        todo.remove(name)
+        print "adding {}".format(name)
+
+    add(first)
+
+    [add(name) for name in todo[:] if name.startswith("Dashboard")]
+    [add(name) for name in todo[:] if name.startswith("Charts M")]
+    [add(name) for name in todo[:] if name.startswith("Charts Data")]
+    [add(name) for name in todo[:] if name.startswith("Input")]
+    [add(name) for name in todo[:]]
+
+    return result
+
+
+def openpyxl_worksheet_stylize(ws):
+    tabColors = {
+        "Input": "00B080",
+        "Dashboard": "D9D9D9",
+        "Charts Data": "FFC000",
+        "Charts M": "FF0000"
+    }
+
+    for titlePrefix, tabColor in tabColors.iteritems():
+        if ws.title.startswith(titlePrefix):
+            ws.sheet_properties.tabColor = tabColor
+
+def openpyxl_add_worksheet(wb, name, cells):
+    ws = wb.create_sheet(name)
+    openpyxl_worksheet_stylize(ws)
+    for cell, value in cells.iteritems():
+        ws[cell] = value
+        if isinstance(value, datetime.datetime):
+            ws[cell].number_format = "MM/DD/YYYY"
+
+    return ws
+
+
+def sheets_to_openlpyxl_workbook(sheets):
+    # create new workbook
+    wb = openpyxl.Workbook()
+
+    # remove default initial sheet
+    wb.remove_sheet(wb.active)
+
+    # iterate through all sheets and make openpyxl worksheets
+    for name, cells in sheets.iteritems():
+        openpyxl_add_worksheet(wb, name, cells)
+
+    return wb
+
+
+def sheets_to_xlsx(sheets, xlsx_filename, dotfile=None):
+    console("Emitting sheets to OpenPyXL workbook:  \n{}\n".format(", ".join(sheets.keys())))
+    wb = sheets_to_openlpyxl_workbook(sheets)
+
+    if dotfile:
+        import openpyxl.drawing.image
+        console("Dependency dotfile = {}\n".format(dotfile))
+        png_filename = dot_to_png(dotfile)
+        img = openpyxl.drawing.image.Image(png_filename)
+        ws = wb.create_sheet("Dependencies")
+        img.anchor(ws['A1'])
+        ws.add_image(img)
+
+    console("OpenPyXL workbook to {}\n".format(xlsx_filename))
+    wb.save(xlsx_filename)
+
+    return wb
+
+
+def dot_to_png(dotfile):
+    import subprocess
+    fname = "/tmp/pydepends.png"
+    cmd = ["dot",
+           "-Tpng",
+           "-o{}".format(fname),
+           dotfile]
+    console("running {}\n".format(" ".join(cmd)))
+    buf = subprocess.check_output(" ".join(cmd), shell=True)
+    text = buf.decode("utf-8")
+    return fname
+
+
+def get_filtered_worksheets(workbook, worksheet_names):
+    console("Worksheet names: {}\n".format(worksheet_names))
+
+    worksheets = workbook.worksheets.copy()
+
+    nums = []
+    patterns = []
+    for arg in worksheet_names:
+        try:
+            v = int(arg)
+            nums.append(v)
+        except:
+            patterns.append(arg)
+
+
+    if len(nums) > 1:
+        worksheets = collections.OrderedDict(list(worksheets.iteritems())[nums[-2], nums[-1]])
+
+    # select worksheet names that match patterns passed in on command line arguments
+    filtered_worksheets = collections.OrderedDict()
+    for pattern in patterns:
+        for name, worksheet in worksheets.iteritems():
+            if pattern == name:
+                filtered_worksheets[name] = worksheet
+
+    if filtered_worksheets:
+        return filtered_worksheets
+
+    return worksheets
+
+
+def find_overloads_in_path(path):
+    if path is None:
+        return {}
+
+    OVERLOADRE = re.compile("^.*_(?P<DATETIME>[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{2}-[0-9]{2}-[0-9]{2}).csv$", re.I)
+    result = {}
+    basepath = os.path.abspath(path)
+    print "# searching '{}' for input update overloads".format(basepath)
+
+    subdirs = [e for e in os.listdir(basepath) if os.path.isdir(os.path.join(basepath, e))]
+    for subdir in subdirs:
+        path = os.path.join(basepath, subdir)
+        entries = [os.path.join(path, e) for e in os.listdir(path)]
+        entries = [(e, OVERLOADRE.match(e)) for e in entries]
+        entries = [(e[0], parse_datetime(e[1].groups()[0])) for e in entries if e[1]]
+        # entries = [e for e in entries if OVERLOADRE.match(e)]
+        entries.sort(key=lambda x: x[0])
+        key = "Input_{}".format(subdir)
+        result[key] = entries
+
+    return result
+
+
+def convert_rows_into_dict(rows):
+    fdata = {}
+    for r, row in enumerate(rows):
+        for c, v in enumerate(list(row)):
+            fdata[colrow_to_name(c + 1, r + 1)] = v
+    return fdata
+
+
+def create_history_sheet(overloads, sheetname_filter):
+    rowtype = collections.namedtuple("rowtype", ["sheet", "date", "csv_url", "origninal_url", "description"])
+    rows = [rowtype._fields[:]]
+    for sheet, csvs in overloads.iteritems():
+        sheetname = sheet.replace("_", " ")
+        if sheetname_filter and sheetname not in sheetname_filter:
+            continue
+        for csv, date in csvs:
+            csv_url = csv.split("/")[-1]
+            desc = "description"
+            rows.append(rowtype(sheetname, date, csv_url, csv_url, desc))
+
+    return convert_rows_into_dict(rows)
+
+def main_xl2py(args):
+    import xl2py_workbook
+    
+    assert args.input_xlsx is not None, "must specify --input-xlsx if --output-py is set"
+
+    filename = args.input_xlsx
+    output_path = args.py
+
+    workbook_data = openpyxl.load_workbook(filename, data_only=True)
+    workbook_formula = openpyxl.load_workbook(filename, data_only=False)
+
+    xl2py_workbook.Workbook(workbook_formula, output_path, workbook_data)
+
+    return 0
+
+
+def xlsx_to_pydir_path(filename):
+    assert filename[-5:] == ".xlsx", "filename must end with .xslx"
+    path = filename[:-5]
+    path = list(os.path.split(path))
+    path[-1] = "{}".format(path[-1])
+    path = os.path.join(*path[-1:]) + "/"
+    return path
+
+
+def main_py2xl(args):
+
+    workbook_dir = os.path.dirname(workbook.__file__)
+
+    overloads = {}
+    if args.updatesdir is not None:
+        overloads = find_overloads_in_path(args.updatesdir)
+    stripped_overloads = {k: [j[0] for j in v] for k, v in overloads.iteritems()}
+
+    workbook.overloads.update(stripped_overloads)
+
+    worksheets = get_filtered_worksheets(workbook, args.worksheets)
+
+    console("all_worksheets={}\n".format([w for w in worksheets]))
+
+    todo = worksheets.values()
+
+    sheets = {}
+    iteration = 0
+    while todo:
+        iteration += 1
+        print "#{}: todo: {}".format(iteration, [w.title for w in todo])
+        print "#{}: sheets: {}".format(iteration, sheets.keys())
+        
+        # pprint(profiler_recipe.p_stats)
+        worksheet = todo.pop(0)
+        worksheet.title = worksheet.title.replace("_", " ")
+
+        rusage(worksheet.title)
+
+        if worksheet.title not in sheets:
+            sheets[worksheet.title] = emit_worksheet(worksheet)
+            for ws in workbook.DelayedModule.loaded_worksheets.values():
+                if ws.title not in sheets.keys() and ws not in todo:
+                    print "#{}: appending {}, which is a dependant of {}".format(iteration, ws.title, worksheet.title)
+                    todo.append(ws)
+
+    first_worksheet = worksheets.values()[0]
+    name = first_worksheet.title
+    safe_name = name.replace(" ", "_")
+
+    sheets = sort_worksheets(sheets, name)
+
+    sheets["History"] = create_history_sheet(overloads, sheets.keys())
+
+    dot_filename = "{}/{}.dot".format(workbook_dir, safe_name)
+    xlsx_filename = args.xlsx if args.xlsx is not None else "{}.xlsx".format(name)
+    csv_filename = args.csv if args.csv is not None else "{}.csv".format(name)
+
+    if args.xlsx is not None:
+        sheets_to_xlsx(sheets, xlsx_filename, dot_filename)
+
+    if args.csv is not None:
+        write_csv(emit_worksheet(first_worksheet, False), csv_filename)
+
+    return 0
+
+if __name__ == "__main__":
+    args = get_command_line_arguments()
+    code = 0
+
+    if args.names and args.input_xlsx is None:
+        import xl2py_worksheet_names
+        print "\n".join(xl2py_worksheet_names.names)
+    
+    if args.py is not None or args.input_xlsx is not None:
+        code = main_xl2py(args)
+
+    if args.xlsx is not None or args.csv is not None:
+        code = main_py2xl(args)
+    
+    sys.exit(code)

@@ -1,0 +1,3 @@
+# source this file as root
+apt-get update -y
+apt-get install -y unzip graphviz python-pip virtualenv jq

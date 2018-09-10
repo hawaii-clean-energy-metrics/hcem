@@ -1,0 +1,23 @@
+export HCEMINITDIR=${HCEMINITDIR:-$(cd $(dirname ${BASH_SOURCE[${#BASH_SOURCE[@]} - 1]}) && echo $PWD)}
+echo HCEMINITDIR=${HCEMINITDIR}
+[[ ! -e "${HCEMINITDIR}/requirements.txt" ]] && echo "cannot init HCEM" && false
+
+pushd ${HCEMINITDIR}
+
+VENV=${HCEMINITDIR}/venv
+echo VENV=$VENV
+
+if [[ ! -e ${VENV} ]]
+then
+  virtualenv venv
+fi
+
+cd ${VENV}/bin
+export PATH=${VENV}/bin:${PATH}
+source activate
+
+
+cd ${HCEMINITDIR}
+pip install -r ${HCEMINITDIR}/requirements.txt
+popd
+

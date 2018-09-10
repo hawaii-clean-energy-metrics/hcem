@@ -1,0 +1,26 @@
+[package]
+command=package_create
+name=rps-heco-2004
+title=HECO 2004 Renewable Portfolio Standards
+owner_org=hawaii-puc
+url=http://puc.hawaii.gov/wp-content/uploads/2004/07/RPS-HECO-2004.pdf
+notes=In accordance with Decision and Order No. 23912 and the Framework for Renewable Portfolio Standards, issued December 20, 2007, attached is the Renewable Portfolio Standard Status Report for the year ended December 31, 2004 for Hawaiian Electric Company, Inc., Hawaii Electric Light Company, Inc. and Maui Electric Company, Limited.
+
+[link]
+command=resource_create
+name=Link to Original Source
+package_id=rps-heco-2004
+url=http://puc.hawaii.gov/wp-content/uploads/2004/07/RPS-HECO-2004.pdf
+
+[pdf]
+command=resource_create
+name=PDF
+package_id=rps-heco-2004
+filename=RPS-HECO-2004.pdf
+
+
+[txt]
+command=resource_create
+name=Text
+package_id=rps-heco-2004
+filename=RPS-HECO-2004.txt

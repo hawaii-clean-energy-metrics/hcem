@@ -1,0 +1,17 @@
+digraph dependencies {
+layers="one:two:three";
+outputorder="edgesfirst";
+nodesep=0.75;
+LPG_Monthly [layer="two"] [style="filled"] [height="2.2"] [shape="box"] [fontsize="20"] [fillcolor="yellow"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="LPG\nMonthly"] [width="2.2"] [penwidth="2"];
+LPG_Monthly -> Input_EIA_Propane_Price [layer="one"] [arrowhead="crow"] [color="limegreen"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+LPG_Monthly -> LPG_Annual [layer="one"] [arrowhead="crow"] [color="black"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Input_EIA_Propane_Price [layer="two"] [style="filled"] [height="2.2"] [shape="doublecircle"] [fontsize="20"] [fillcolor="limegreen"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Input\nEIA\nPropane\nPrice"] [width="2.2"] [penwidth="2"];
+LPG_Annual [layer="two"] [style="filled"] [height="2.2"] [shape="box"] [fontsize="20"] [fillcolor="yellow"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="LPG\nAnnual"] [width="2.2"] [penwidth="2"];
+LPG_Annual -> EIA_Expenditures [layer="one"] [arrowhead="crow"] [color="black"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+LPG_Annual -> LPG_Monthly [layer="one"] [arrowhead="crow"] [color="black"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+LPG_Annual -> Unit_Conversions [layer="one"] [arrowhead="crow"] [color="black"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+EIA_Expenditures [layer="two"] [style="filled"] [height="2.2"] [shape="box"] [fontsize="20"] [fillcolor="yellow"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="EIA\nExpenditures"] [width="2.2"] [penwidth="2"];
+EIA_Expenditures -> Input_EIA_SEDS [layer="one"] [arrowhead="crow"] [color="limegreen"] [arrowsize="1.75"] [dir="both"] [penwidth="3"];
+Unit_Conversions [layer="two"] [style="filled"] [height="2.2"] [shape="box"] [fontsize="20"] [fillcolor="yellow"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Unit\nConversions"] [width="2.2"] [penwidth="2"];
+Input_EIA_SEDS [layer="two"] [style="filled"] [height="2.2"] [shape="doublecircle"] [fontsize="20"] [fillcolor="limegreen"] [fontname="Helvetica-Narrow-Bold"] [fixedsize="true"] [label="Input\nEIA\nSEDS"] [width="2.2"] [penwidth="2"];
+}
