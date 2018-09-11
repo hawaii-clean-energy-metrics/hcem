@@ -36,9 +36,9 @@ function run {
   run ./046-Update_050_Automated_Input_Data.sh
   run ./055-Generate_Model_Outputs.sh
   run ./070-Data_Portal_Push_Outputs/075-Upload_Automated_Model_Outputs.sh
-  run git add 030-Master_Model_Python 050-Automated_Input_Data 060-Automated_Model_Outputs
-  run git commit -m "HCEM updates on $(date '+%Y-%m-%d %H:%M') from rev $(git rev-parse --short HEAD)"
-  run git push
+  git add 030-Master_Model_Python 050-Automated_Input_Data 060-Automated_Model_Outputs
+  git commit -m "HCEM updates on $(date '+%Y-%m-%d %H:%M') from rev $(git rev-parse --short HEAD)"
+  git push
 ) 222> ${LOCKFILE}
 date
 
