@@ -435,7 +435,7 @@ def stringrep(val, xlat_double_quotes=False):
 
     return "{}".format(val)
 
-
+import sys
 def register_cell_class_to_worksheet(worksheet):
 
     def attach_to_worksheet(cell_class):
@@ -449,8 +449,13 @@ def register_cell_class_to_worksheet(worksheet):
 
         def evaluate(self):
             if not DOCACHE or cell_class.cache_generation:
+                if row > 550 and row < 553 and col > 57:
+                    sys.stderr.write("CACHED {}={}\n".format(name, cell_class.cache_value))
                 return cell_class.cache_value
 
+
+            if row > 550 and row < 553 and col > 57:
+                sys.stderr.write("NOT CACHED {}  cache_gen={}   cache_val={}   formula={}\n".format(name, name, name, name)) # cell_class.cache_generation, cell_class.cache_value, cell_cache.formula))
             cell_class.cache_value = fn()
             if cell_class.cache_value is None:
                 cell_class.cache_value = 0
@@ -470,14 +475,24 @@ def register_cell_class_to_worksheet(worksheet):
         def evalfn(self, return_formula=True):
             value = self.__call__()
             if return_formula:
-                formula = getattr(cell_class, "formula", None)
-                if formula:
+                formula = getattr(cell_class, 'formula', None)
+                if formula is not None:
                     return formula
 
             if getattr(self, 'isdatetime', False):
                 value = excel_to_datetime(value)
 
             return value
+            
+        def setcachefn(self, value, isdatetime):
+            cell_class.cache_value = value
+            cell_class.value = value
+            cell_class.cache_generation += 1
+            if hasattr(cell_class, 'formula'):
+                # sys.stderr.write("delformula {}".format(name))
+                delattr(cell_class, 'formula')
+            
+
 
         def cclass(self):
             return cell_class
@@ -488,6 +503,7 @@ def register_cell_class_to_worksheet(worksheet):
         setattr(cell_class, "__repr__", reprfn)
         setattr(cell_class, "evaluate", evalfn)
         setattr(cell_class, "cclass", cclass)
+        setattr(cell_class, "setcache", setcachefn)
         if fn is None:
             setattr(cell_class, "cache_generation", 1)
             setattr(cell_class, "cache_value", cell_class.value)

@@ -31,6 +31,7 @@ def overload_worksheet(worksheet, csv_filename):
         assert line[-1] == '"'
         line = line[1:-1]
         cells = line.split('","')
+        sys.stderr.write("\n\n")
         for col,cell in enumerate(cells):
             if not len(cell): continue
 
@@ -50,15 +51,20 @@ def overload_worksheet(worksheet, csv_filename):
 
             cell_instance = worksheet.icells.get((col + 1, row + 1))
             if cell_instance:
-                klass = cell_instance.cclass()
-                setattr(klass, "value", value)
-                setattr(klass, "cache_value", value)
-                setattr(klass, "isdatetime", isdatetime)
-                setattr(klass, "cache_generation", 1)
-                if hasattr(klass, "formula"):
-                    delattr(klass, "formula")
+                cid = colrow_to_name(col + 1, row + 1)
+                #sys.stderr.write(cid+". ")
+                cell_instance.setcache(value, isdatetime)
+
+                # klass = cell_instance.cclass()
+                # setattr(klass, "value", value)
+                # setattr(klass, "cache_value", value)
+                # setattr(klass, "isdatetime", isdatetime)
+                # setattr(klass, "cache_generation", 1)
+                # if hasattr(klass, "formula"):
+                #     delattr(klass, "formula")
             else:
                 cid = colrow_to_name(col + 1, row + 1)
+                #sys.stderr.write(cid+"+ ")
                 klass = type(cid, (object, ), { "value": value, "isdatetime": isdatetime })
                 register_cell(klass)
 
