@@ -55,6 +55,8 @@ def overload_worksheet(worksheet, csv_filename):
                 setattr(klass, "cache_value", value)
                 setattr(klass, "isdatetime", isdatetime)
                 setattr(klass, "cache_generation", 1)
+                if hasattr(klass, "formula"):
+                    delattr(klass, "formula")
             else:
                 cid = colrow_to_name(col + 1, row + 1)
                 klass = type(cid, (object, ), { "value": value, "isdatetime": isdatetime })

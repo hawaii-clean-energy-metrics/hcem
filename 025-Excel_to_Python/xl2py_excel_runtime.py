@@ -469,8 +469,10 @@ def register_cell_class_to_worksheet(worksheet):
 
         def evalfn(self, return_formula=True):
             value = self.__call__()
-            if formula and return_formula:
-                value = formula
+            if return_formula:
+                formula = getattr(cell_class, "formula", None)
+                if formula:
+                    return formula
 
             if getattr(self, 'isdatetime', False):
                 value = excel_to_datetime(value)
