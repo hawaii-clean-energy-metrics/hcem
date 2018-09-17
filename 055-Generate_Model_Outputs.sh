@@ -20,8 +20,8 @@ function compare_and_delete_if_same(){
         A="${TDIR}/a"
         B="${TDIR}/b"
         echo "Extracting .xlsx files to ${A} and ${B}"
-        unzip -q "${1}" -d "${A}" -x docProps/core.xml
-        unzip -q "${2}" -d "${B}" -x docProps/core.xml
+        unzip -q "${1}" -d "${A}" -x */core.xml */*.png
+        unzip -q "${2}" -d "${B}" -x */core.xml */*.png
     fi
 
     if diff -rbq "${A}" "${B}"
