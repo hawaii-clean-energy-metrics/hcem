@@ -441,14 +441,17 @@ def register_cell_class_to_worksheet(worksheet):
     def attach_to_worksheet(cell_class):
         name = cell_class.__name__
         col, row = name_to_colrow(name)
+        # key = (col, row, worksheet.title) #"{}_{}".format(worksheet.title,
+        # name)
+
+        fn = getattr(cell_class, name, None)
+        formula = getattr(cell_class, "formula", None)
 
         def evaluate(self):
             if not DOCACHE or cell_class.cache_generation:
                 return cell_class.cache_value
 
-            fn = getattr(cell_class, name, None)
-            cell_class.cache_value = fn() if fn else cell_class.value;
-            
+            cell_class.cache_value = fn()
             if cell_class.cache_value is None:
                 cell_class.cache_value = 0
             cell_class.cache_generation += 1
@@ -456,13 +459,13 @@ def register_cell_class_to_worksheet(worksheet):
             return cell_class.cache_value
 
         def fnstr(self):
-            formula = getattr(cell_class, "formula", None)
-            fn = getattr(cell_class, name, None)
+            # fn = getattr(clazz, "formula", None)
             return "\n".join([s.strip() for s in inspect.getsourcelines(fn)[0]])
 
         def reprfn(self):
-            fstr = "" if formula is None else " formula={}".format(formula)
-            return "<{} v={}{}>".format(name, cell_class.value, fnstr)
+            # fn = getattr(clazz, "formula", None)
+            fn = "" if formula is None else " fn={}".format(formula)
+            return "<{} v={}{}>".format(name, cell_class.value, fn)
 
         def evalfn(self, return_formula=True):
             value = self.__call__()
@@ -479,16 +482,17 @@ def register_cell_class_to_worksheet(worksheet):
         def cclass(self):
             return cell_class
 
+        setattr(cell_class, "formula", formula)
         setattr(cell_class, "fnstr", fnstr)
         setattr(cell_class, "__call__", evaluate)
         setattr(cell_class, "__repr__", reprfn)
         setattr(cell_class, "evaluate", evalfn)
         setattr(cell_class, "cclass", cclass)
-        #if getattr(cell_class, name, None) is None:
-        #    setattr(cell_class, "cache_generation", 1)
-        #    setattr(cell_class, "cache_value", cell_class.value)
-        #else:
-        setattr(cell_class, "cache_generation", 0)
+        if fn is None:
+            setattr(cell_class, "cache_generation", 1)
+            setattr(cell_class, "cache_value", cell_class.value)
+        else:
+            setattr(cell_class, "cache_generation", 0)
 
         cell_instance = cell_class()
         worksheet.icells[(col, row)] = cell_instance
