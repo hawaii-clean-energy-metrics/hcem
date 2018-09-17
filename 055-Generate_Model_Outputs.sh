@@ -87,7 +87,7 @@ function run_charts() {
         Charts_Data_M12_Transportation \
         Charts_Data_M13 \
         Charts_Data_M14 \
-        Charts_Data_M15 \ 
+        Charts_Data_M15 \
         Charts_Data_M16
 }
 
@@ -121,4 +121,6 @@ function run_dashboard() {
 
 
 run_dashboard
+run_charts
+
 
