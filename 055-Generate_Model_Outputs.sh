@@ -30,6 +30,11 @@ function compare_and_delete_if_same(){
         rm -v "${2}"
     else
         echo "${2} is different, keeping"
+        BASE=$(basename $(dirname "${2}"))
+        EXTENSION="${2##*.}"
+        LATEST="$(dirname ${2})/${BASE}.${EXTENSION}"
+        cp -v "${2}" "${LATEST}"
+
     fi
 
     # cleanup mktemp dir created when extracting xlsx files
