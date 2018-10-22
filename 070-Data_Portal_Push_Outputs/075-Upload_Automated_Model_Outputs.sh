@@ -98,7 +98,7 @@ function scan_model_outputs_dir_and_upload()
     do
         WORKSHEET=$(basename $WORKSHEETDIR)
         cd "$WORKSHEETDIR"
-        for CSV in ${WORKSHEET}_*.csv
+        for CSV in $(ls -1d "${WORKSHEET}"_*.csv | tail -1)
         do
            upload_csv_and_xlsx "${WORKSHEETDIR}/${CSV}"
         done
