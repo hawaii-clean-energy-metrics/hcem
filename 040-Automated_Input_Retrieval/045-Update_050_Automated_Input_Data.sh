@@ -30,7 +30,8 @@ function compare_and_delete_if_same(){
     else
         echo "different...keeping ${2}"
         BASE=$(basename $(dirname "${2}"))
-        LATEST="$(dirname ${2})/${BASE}.csv"
+        EXTENSION="${2##*.}"
+        LATEST="$(dirname ${2})/${BASE}.${EXTENSION}"
         cp -v "${2}" "${LATEST}"
 
     fi
@@ -153,8 +154,6 @@ function process_gsp_hi() {
 
     compare_and_delete_if_same "${OLD_FILE}" "${DEST}"
 }
-process_dbedt_population DBEDT_Population
-exit
 
 getxl RPS 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRSatJbu2opk5WXaO9qY6OiYcgFTjCFZwQUq4yrVtkkWR3kGQwqz32Jb2zrl_9gaAxscbN3KyfO3IkR/pub?gid=1165316079&single=true&output=csv&extensionForSpreadsheet.py.hack=.csv' 0 0
 
