@@ -7,6 +7,45 @@ IFS=$'\n'
 CKANHEPF="${BASEDIR}/ckan_hcem_helper.py"
 export CONFIG="${BASEDIR}/config.ini"
 
+function create_or_update() {
+    NAME=$1
+    FILENAME=$2
+    PACKAGEID=$3
+
+    SEARCH_RESULTS=$("${CKANHEPF}" --command=resource_search --query=name:"${NAME}")
+    COUNT=$(echo "${SEARCH_RESULTS}" | jq -r .count)
+    if [[ "${COUNT}" == "0" ]]
+    then
+        upload_if_not_exists $1 $2 $3
+        return
+    fi
+    if [[ "${COUNT}" != "1" ]]
+    then
+        echo
+        echo "*****"
+        echo "Found multiple entries: $NAME"
+        echo "*****"
+        return
+    fi
+
+        
+    RESOURCE_ID=$(echo "${SEARCH_RESULTS}" | jq -r .results[0].id)
+    if [[ ! -e "${FILENAME}" ]]
+    then
+        echo "file not found: ${FILENAME}"
+        return
+    fi
+
+    echo "+++ updating ${FILENAME} as '${NAME}' to CKAN package '${PACKAGEID}'"
+    "${CKANHEPF}" \
+        --command=resource_update \
+        --name="${NAME}" \
+        --filename="${FILENAME}" \
+        --id="${RESOURCE_ID}"
+    sleep 1s
+}
+
+
 function upload_if_not_exists() {
     NAME=$1
     FILENAME=$2
@@ -40,37 +79,14 @@ function upload_csv_and_xlsx() {
     METRICNUM=$(echo $WORKSHEET | grep -oPe '_M\K[0-9][0-9]?')
     PACKAGEID="hawaii-clean-energy-metric-${METRICNUM}"
     FILEBASE=$(basename "${CSV}" .csv)
-    NAMEBASE=$(echo "${FILEBASE}" | tr _ \  )
     XLSX="${FILEBASE}.xlsx"
     DATESTR=$(echo ${FILEBASE} | rev | cut -d_ -f1 | rev)
     FILENAME_CSV="${WORKSHEET_DIR}/${CSV}"
     FILENAME_XLSX="${WORKSHEET_DIR}/${XLSX}"
 
-    upload_if_not_exists "$NAMEBASE CSV" "${FILENAME_CSV}" "${PACKAGEID}"
-    upload_if_not_exists "$NAMEBASE XLSX" "${FILENAME_XLSX}" "${PACKAGEID}"
-    return
-
-    IDS=$("${CKANHEPF}" --command=resource_search --query=name:"${NAMEBASE} XLSX" | jq -r .results[].id)
-    if [[ -n "${IDS}" ]]
-    then
-        echo "$NAMEBASE already exists in CKAN"
-        return
-    fi
-    "${CKANHEPF}" \
-        --command=resource_create \
-        --name="${NAMEBASE} XLSX" \
-        --package_id="${PACKAGEID}" \
-        --filename="${FILENAME_XLSX}" \
-        --debug=True
-    continue
-
-    "${CKANHEPF}" \
-        --command=resource_create \
-        --name="${NAMEBASE} CSV" \
-        --package_id="${PACKAGEID}" \
-        --filename="${FILENAME_CSV}" \
-        --debug=True
-
+    NAMEBASE=$(echo "${FILEBASE::-20}" | tr _ \  ) # strip off datestamp and replace underscores with spaces
+    create_or_update "$NAMEBASE CSV" "${FILENAME_CSV}" "${PACKAGEID}"
+    create_or_update "$NAMEBASE XLSX" "${FILENAME_XLSX}" "${PACKAGEID}"
 }
 
 function scan_model_outputs_dir_and_upload()
